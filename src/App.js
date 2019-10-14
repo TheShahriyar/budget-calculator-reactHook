@@ -55,6 +55,24 @@ function App() {
     }
   };
 
+  //Clear all items
+  const clearItem = () => {
+    setExpenses([]);
+    handleAlert({ type: "danger", text: "All item deleted" });
+  };
+
+  //Delete Single item
+  const handleDelete = id => {
+    let tempExpenses = expenses.filter(item => item.id !== id);
+    setExpenses(tempExpenses);
+    handleAlert({ type: "danger", text: "Item deleted" });
+  };
+
+  //Edit item
+  const handleEdit = id => {
+    console.log(`item edited : ${id}`);
+  };
+
   return (
     <React.Fragment>
       {alert.show && <Alert type={alert.type} text={alert.text} />}
@@ -67,7 +85,12 @@ function App() {
           amount={amount}
           handleAmount={handleAmount}
         />
-        <ExpenseList expenses={expenses}></ExpenseList>
+        <ExpenseList
+          expenses={expenses}
+          clearItem={clearItem}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+        ></ExpenseList>
       </main>
       <h1>
         Total spending :{" "}
