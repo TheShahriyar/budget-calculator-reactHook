@@ -29,6 +29,8 @@ function App() {
   const [charge, setCharge] = useState("");
   const [amount, setAmount] = useState("");
   const [alert, setAlert] = useState({ show: false });
+  const [edit, setEdit] = useState(false);
+  const [id, setId] = useState(0);
 
   const handleCharge = e => {
     setCharge(e.target.value);
@@ -45,11 +47,20 @@ function App() {
   const handleSubmit = e => {
     e.preventDefault();
     if (charge !== "" && amount > 0) {
-      const singleExpense = { id: uuid(), charge, amount };
-      setExpenses([...expenses, singleExpense]);
+      if (edit) {
+        let tempExpenses = expenses.map(item => {
+          return item.id === id ? { ...item, charge, amount } : item;
+        });
+        setExpenses(tempExpenses);
+        setEdit(false);
+        handleAlert({ type: "success", text: "item edited" });
+      } else {
+        const singleExpense = { id: uuid(), charge, amount };
+        setExpenses([...expenses, singleExpense]);
+        handleAlert({ type: "success", text: "item added" });
+      }
       setCharge("");
       setAmount("");
-      handleAlert({ type: "success", text: "item added" });
     } else {
       handleAlert({ type: "danger", text: "field can't be empty" });
     }
@@ -70,7 +81,12 @@ function App() {
 
   //Edit item
   const handleEdit = id => {
-    console.log(`item edited : ${id}`);
+    let expense = expenses.find(item => item.id === id);
+    let { charge, amount } = expense;
+    setAmount(amount);
+    setCharge(charge);
+    setEdit(true);
+    setId(id);
   };
 
   return (
@@ -84,6 +100,7 @@ function App() {
           handleCharge={handleCharge}
           amount={amount}
           handleAmount={handleAmount}
+          edit={edit}
         />
         <ExpenseList
           expenses={expenses}
